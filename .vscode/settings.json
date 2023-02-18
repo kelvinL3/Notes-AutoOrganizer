@@ -1,0 +1,6 @@
+{
+  "json.schemas": [
+    
+  ],
+  "python.defaultInterpreterPath": "./venv/bin/python"
+}

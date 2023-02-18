@@ -1,15 +1,11 @@
 // const backendUrl = "http://localhost:8000";
+import { NoteType } from "./types";
 
-interface Note {
-  content: string;
-  id: string;
-}
-
-type SetData = (data: any) => {};
+type SetData = (data: any) => void;
 
 interface sendNotesArgs {
-  notes: Note[];
-  sessionId: string;
+  notes: NoteType[];
+  sessionId?: string;
   setData: SetData;
 }
 
@@ -25,7 +21,7 @@ export function sendNotes(args: sendNotesArgs) {
   const { notes, sessionId, setData } = args;
 
   const requestOptions = {
-    method: "PUT",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       notes: notes,

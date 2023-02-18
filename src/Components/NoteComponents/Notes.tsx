@@ -5,14 +5,19 @@ import "../css/Note.css";
 import Note from "./Note";
 import CreateNote from "./CreateNote";
 import { v4 as uuid } from "uuid";
+// import { SendDataButton } from "./SendDataButton";
+import { usePrevious } from "../../frontend/hooks";
+import { sendNotes } from "../../frontend/api";
+import { NoteType } from "../../frontend/types";
 
-interface NoteState {
-  id: string;
-  text: string;
+enum CanvasState {
+  Editing = 1,
+  Waiting = 2,
+  Reorganizing = 3,
 }
 
 function Notes() {
-  const [notes, setNotes] = useState<NoteState[]>([]);
+  const [notes, setNotes] = useState<NoteType[]>([]);
   const [inputText, setInputText] = useState("");
 
   const textHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -60,21 +65,68 @@ function Notes() {
     localStorage.setItem("Notes", JSON.stringify(notes));
   }, [notes]);
 
+  // Re-organizing Notes
+  const [displayState, setDisplayState] = useState<CanvasState>(
+    CanvasState.Editing
+  );
+
+  const [clusters, setClusters] = useState(undefined);
+  if (clusters) {
+    console.log("Clusters", clusters);
+  }
+
+  const prevState = usePrevious(displayState);
+
+  useEffect(() => {
+    console.log("pre and current state", prevState, displayState);
+    if (displayState === prevState) {
+      return;
+    }
+    console.log("state changed");
+    if (displayState === CanvasState.Waiting) {
+      console.log("sending Data over now");
+      // assume prev state was CanvasState.Editing
+      sendNotes({ notes, setData: setClusters });
+    }
+  }, [displayState, notes, prevState]);
+
   return (
-    <div className="notes">
-      {notes.map((note) => (
-        <Note
-          key={note.id}
-          id={note.id}
-          text={note.text}
-          deleteNote={deleteNote}
+    <div>
+      <div className="state_change_container">
+        <button
+          className="reorg_button"
+          onClick={() => {
+            setDisplayState(CanvasState.Waiting);
+          }}
+        >
+          Re-Organize Your Notes
+        </button>
+
+        <button
+          className="reorg_button"
+          onClick={() => {
+            setDisplayState(CanvasState.Editing);
+          }}
+        >
+          Back to Editing
+        </button>
+      </div>
+
+      <div className="notes">
+        {notes.map((note) => (
+          <Note
+            key={note.id}
+            id={note.id}
+            text={note.text}
+            deleteNote={deleteNote}
+          />
+        ))}
+        <CreateNote
+          textHandler={textHandler}
+          saveHandler={saveHandler}
+          inputText={inputText}
         />
-      ))}
-      <CreateNote
-        textHandler={textHandler}
-        saveHandler={saveHandler}
-        inputText={inputText}
-      />
+      </div>
     </div>
   );
 }
