@@ -6,10 +6,9 @@ import Note from "./Note";
 import CreateNote from "./CreateNote";
 import { v4 as uuid } from "uuid";
 
-
 interface NoteState {
-  id: string
-  text: string
+  id: string;
+  text: string;
 }
 
 function Notes() {
@@ -46,7 +45,7 @@ function Notes() {
     const json = localStorage.getItem("Notes");
     if (json) {
       const data = JSON.parse(json);
-      // console.log("Reading", data);
+      console.log("Reading", data);
       setNotes(data);
     }
   }, []);

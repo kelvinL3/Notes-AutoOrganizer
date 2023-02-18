@@ -2,7 +2,6 @@
   "name": "truera",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -28,10 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server-dev": "ts-node-dev src/server/index.ts",
-    "server-build": "tsc",
-    "server-start": "node dist"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -56,5 +52,6 @@
     "@types/express": "^4.17.17",
     "@types/node": "^18.14.0",
     "ts-node-dev": "^2.0.0"
-  }
+  },
+  "proxy": "http://localhost:8000"
 }

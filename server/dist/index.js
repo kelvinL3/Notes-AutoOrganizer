@@ -22,16 +22,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const reportWebVitals = (onPerfEntry) => {
-    if (onPerfEntry && onPerfEntry instanceof Function) {
-        Promise.resolve().then(() => __importStar(require('web-vitals'))).then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-            getCLS(onPerfEntry);
-            getFID(onPerfEntry);
-            getFCP(onPerfEntry);
-            getLCP(onPerfEntry);
-            getTTFB(onPerfEntry);
-        });
-    }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.default = reportWebVitals;
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
+const dotenv = __importStar(require("dotenv"));
+const cors_1 = __importDefault(require("cors"));
+dotenv.config();
+// process.env.SECRET_CODE
+// SECRET_CODE=1234
+const app = (0, express_1.default)();
+// if you want only your frontend to connect
+app.use((0, cors_1.default)({ origin: "http://localhost:3000" }));
+app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.get("/", (req, res) => {
+    res.send("Healthy");
+});
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Server is running on PORT ${PORT}`);
+});

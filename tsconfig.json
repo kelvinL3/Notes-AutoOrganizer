@@ -96,5 +96,5 @@
   "include": [
     "src/custom.d.ts",
     "src"
-  ],
+, "server"  ],
 }
