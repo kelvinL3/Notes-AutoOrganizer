@@ -4,6 +4,7 @@ from flask import Flask, send_from_directory, request
 from embeddings import get_embeddings
 from embeddings import get_nlp_cloud_embeddings
 from clustering import dbscan_clustering
+from helpers import freeze
 
 app = Flask(__name__, static_folder='../build')
 
@@ -13,9 +14,18 @@ def send_data():
     data = json.loads(request.get_data())
     notes = data['notes']
 
-    embeddings = get_nlp_cloud_embeddings(notes)
+    embeddings = get_nlp_cloud_embeddings(freeze(notes))
     clusterings = dbscan_clustering(embeddings)
-    return clusterings
+    # drop the unnecessary embedding info, convert int64 to int
+    # for serializability
+    return [
+        {
+            **cluster,
+            'embedding': 'drop',
+            'label': int(cluster['label'])
+        }
+        for cluster in clusterings
+    ]
 
 
 # Serve React App

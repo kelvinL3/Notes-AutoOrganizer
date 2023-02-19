@@ -2,15 +2,22 @@ import openai
 import os
 from typing import List, Dict
 import requests
+from functools import lru_cache
+from helpers import unfreeze
 
 # API_KEY = os.getenv('OPENAI_API_KEY')
 API_KEY = os.getenv('NLP_CLOUD_KEY')
 
 
+@lru_cache(maxsize=None)
 def get_nlp_cloud_embeddings(notes):
+    notes = unfreeze(notes)
+    # import pdb
+    # pdb.set_trace()
     data = {
         'sentences': [note['text'] for note in notes]
     }
+    print('Requesting from NLP Cloud')
     response = requests.post(
         'https://api.nlpcloud.io/v1/paraphrase-multilingual-mpnet-base-v2/embeddings',
         headers={
@@ -21,7 +28,9 @@ def get_nlp_cloud_embeddings(notes):
     if response.status_code != 200:
         raise Exception(response)
 
-    return response.json()
+    embeddings = response.json()['embeddings']
+
+    return [{**note, 'embedding': embedding} for note, embedding in zip(notes, embeddings)]
 
 
 def get_embeddings(notes: List[Dict[str, str]]):
@@ -32,13 +41,4 @@ def get_embeddings(notes: List[Dict[str, str]]):
         )
         return response['data'][0]['embedding']
 
-    # with_embeddings = []
-    # for note in notes:
-    #     resp_obj = note
-    #     # resp_obj['note']: note
-    #     resp_obj['embedding'] = get_embedding(note['text'])
-    #     with_embeddings.append(resp_obj)
-
-    def mapper(note):
-        note['embedding'] = get_embedding(note['text'])
-    return map(mapper, notes)
+    return [{**note, 'embedding': get_embedding(note['text'])} for note in notes]

@@ -1,12 +1,14 @@
 // const backendUrl = "http://localhost:8000";
 import { NoteType } from "./types";
+import { CanvasState } from "../Components/NoteComponents/Notes";
 
-type SetData = (data: any) => void;
+type SetData = (notes: NoteType[]) => void;
 
 interface sendNotesArgs {
   notes: NoteType[];
   sessionId?: string;
-  setData: SetData;
+  setNotes: SetData;
+  setDisplayState: (canvasState: CanvasState) => void;
 }
 
 export function requestCookie(setData: SetData) {
@@ -18,7 +20,7 @@ export function requestCookie(setData: SetData) {
 }
 
 export function sendNotes(args: sendNotesArgs) {
-  const { notes, sessionId, setData } = args;
+  const { notes, sessionId, setNotes, setDisplayState } = args;
 
   const requestOptions = {
     method: "POST",
@@ -31,5 +33,13 @@ export function sendNotes(args: sendNotesArgs) {
 
   fetch("/sendNotes", requestOptions)
     .then((response) => response.json())
-    .then((data) => setData({ data }));
+    .then((data) => {
+      const clusters: Array<{ id: string; label: number }> = data;
+      notes.forEach((note, index) => {
+        const group = clusters[index];
+        note["group"] = group["label"]; // we're returning 'label'
+      });
+      setNotes(notes);
+      setDisplayState(CanvasState.Reorganizing);
+    });
 }

@@ -5,7 +5,7 @@ from sklearn.cluster import DBSCAN, KMeans
 def dbscan_clustering(notes):
 
     # notes[0]['embedding']
-    dbscan = DBSCAN(eps=0.05, min_samples=1)
+    dbscan = DBSCAN(eps=3.3, min_samples=1)
     dbscan.fit([note['embedding'] for note in notes])
     labels = dbscan.labels_
 

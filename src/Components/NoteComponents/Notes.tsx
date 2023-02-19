@@ -10,7 +10,7 @@ import { usePrevious } from "../../frontend/hooks";
 import { sendNotes } from "../../frontend/api";
 import { NoteType } from "../../frontend/types";
 
-enum CanvasState {
+export enum CanvasState {
   Editing = 1,
   Waiting = 2,
   Reorganizing = 3,
@@ -70,10 +70,10 @@ function Notes() {
     CanvasState.Editing
   );
 
-  const [clusters, setClusters] = useState(undefined);
-  if (clusters) {
-    console.log("Clusters", clusters);
-  }
+  // const [clusters, setClusters] = useState(undefined);
+  // if (clusters) {
+  //   console.log("Clusters", clusters);
+  // }
 
   const prevState = usePrevious(displayState);
 
@@ -86,10 +86,11 @@ function Notes() {
     if (displayState === CanvasState.Waiting) {
       console.log("sending Data over now");
       // assume prev state was CanvasState.Editing
-      sendNotes({ notes, setData: setClusters });
+      sendNotes({ notes, setNotes, setDisplayState });
     }
   }, [displayState, notes, prevState]);
 
+  console.log("the notes", notes);
   return (
     <div>
       <div className="state_change_container">
@@ -117,6 +118,7 @@ function Notes() {
           <Note
             key={note.id}
             id={note.id}
+            group={note.group}
             text={note.text}
             deleteNote={deleteNote}
           />
