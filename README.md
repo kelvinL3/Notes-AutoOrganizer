@@ -1,70 +1,35 @@
-# Getting Started with Create React App
+# Notes Organizer Proof of Concept
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This app is a basic notes app with a smart organizer feature that allows you to auto group relevant notes together. It works via an embeddings API to compute the vector representation of a note's text in a latent space. Then groups the notes with DBSCAN, a type of clustering algorithm.
 
-## Available Scripts
+# Architecture
 
-In the project directory, you can run:
+This app's frontend is React / Typescript.
 
-### `npm start`
+## Storage
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The notes are not persisted on the server. The notes are saved to localStorage, the browser's Web Storage API.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Backend
 
-### `npm test`
+The backend serves the client requests to reorganize notes.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Embeddings
 
-### `npm run build`
+I used a few embedding providers, [openai](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings?lang=python) and [nlp cloud](https://docs.nlpcloud.com/#embeddings). These providers will return in different latent spaces, so the distances between vectors could be at a different scale, the dimensionality could be greater or fewer, or the general quality of the embeddings might be better or worse. Downstream tasks that depend on the embeddings will require tuning based on these qualities.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Clustering + Alternatives
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Clustering is an ML problem to take a list of points and "cluster" them together based on similarity.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This project uses DBSCAN as the underlying clustering algorithm. I considered using K Means clustering. However, K Means clustering requires inputting the number of clusters, which is unknown to both the client and server. Therefore I took an alternative approach with density clustering, which creates clusters based on how close they are in the latent space.
 
-### `npm run eject`
+As mentioned in the [Embeddings](###Embeddings) section, the latent space of the embedding will influence the tuning of the hyperparameters in the clustering algorithm I choose.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The DBSCAN algorithm takes in a parameter known as `eps`, which serves as the boundary for determining if two points belong to the same cluster. This is based on the distance between the two points, and if the distance is less than or equal to the `eps` value, they are considered part of the same cluster. I tuned this to 3.3.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Final Thoughts
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+I created this project to test out NLP methods to improve existing types of text-based products.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+If you liked this idea, want to provide feedback, or just chat, feel free to reach out to me at [kelvinliu1234@gmail.com](mailto:kelvinliu1234@gmail.com).
