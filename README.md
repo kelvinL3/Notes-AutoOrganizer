@@ -2,6 +2,10 @@
 
 This app is a basic notes app with a smart organizer feature that allows you to auto group relevant notes together. It works via an embeddings API to compute the vector representation of a note's text in a latent space. Then groups the notes with DBSCAN, a type of clustering algorithm.
 
+# Quickstart
+
+See [instructions](server/README.md)
+
 # Architecture
 
 This app's frontend is React / Typescript.
