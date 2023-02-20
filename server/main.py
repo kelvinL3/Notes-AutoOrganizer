@@ -1,10 +1,10 @@
 import json
 import os
 from flask import Flask, send_from_directory, request
-from embeddings import get_embeddings
-from embeddings import get_nlp_cloud_embeddings
-from clustering import dbscan_clustering
-from helpers import freeze
+from server.embeddings import get_embeddings
+from server.embeddings import get_nlp_cloud_embeddings
+from server.clustering import dbscan_clustering
+from server.helpers import freeze
 
 app = Flask(__name__, static_folder='../build')
 

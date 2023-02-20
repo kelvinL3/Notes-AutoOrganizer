@@ -3,7 +3,7 @@ import os
 from typing import List, Dict
 import requests
 from functools import lru_cache
-from helpers import unfreeze
+from server.helpers import unfreeze
 
 # API_KEY = os.getenv('OPENAI_API_KEY')
 API_KEY = os.getenv('NLP_CLOUD_KEY')
