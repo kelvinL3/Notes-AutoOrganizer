@@ -10,7 +10,7 @@ body {
 .main {
   max-width: 960px;
   margin: 0px auto;
-  padding: 0px 15px;
+  padding: 0px 20px;
   min-height: 100vh;
 }
 
@@ -30,15 +30,22 @@ body {
   margin-bottom: 20px;
 }
 
-.notes {
+.base_container {
   max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(3, minmax(300px, 1fr));
 }
 
-@media screen and (max-width: 900px) {
+.carousel_container {
+  /* display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(3, minmax(300px, 1fr)); */
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap; /* wrap elements to next line */
+  margin-bottom: 15px;
+}
+
+/* @media screen and (max-width: 900px) {
   .notes {
     grid-template-columns: repeat(2, minmax(300px, 1fr));
   }
@@ -48,4 +55,4 @@ body {
   .notes {
     grid-template-columns: repeat(1, minmax(300px, 1fr));
   }
-}
+} */

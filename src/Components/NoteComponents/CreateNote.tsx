@@ -14,12 +14,15 @@ function CreateNote(params: Params) {
   const charLeft = charLimit - inputText.length;
 
   return (
-    <div className="note" style={{ background: "rgba(255, 255, 255, 0)" }}>
+    <div
+      className="note"
+      style={{ background: "rgba(255, 255, 255, 0)", width: "300px" }}
+    >
       <textarea
         cols={10}
         rows={5}
         value={inputText}
-        placeholder="Type...."
+        placeholder="Type your note here..."
         onChange={textHandler}
         maxLength={100}
       ></textarea>

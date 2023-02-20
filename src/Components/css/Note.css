@@ -89,3 +89,16 @@
     cursor: pointer;
 
 }
+
+.group_carousel {
+    color: #ad1349;
+    gap: 15px;
+    padding: 5px 5px;
+    display: flex;
+    justify-content: start;
+    overflow-x: scroll;
+    scroll-snap-type: mandatory;
+    scroll-behavior: smooth;
+    flex-grow: 1; /* allows carousels to grow */
+    margin: 10px 0px; /* add space between carousels */
+}

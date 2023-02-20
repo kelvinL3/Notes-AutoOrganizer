@@ -40,6 +40,6 @@ export function sendNotes(args: sendNotesArgs) {
         note["group"] = group["label"]; // we're returning 'label'
       });
       setNotes(notes);
-      setDisplayState(CanvasState.Reorganizing);
+      setDisplayState(CanvasState.Editing);
     });
 }
