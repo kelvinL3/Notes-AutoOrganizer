@@ -3,9 +3,9 @@ from sklearn.cluster import DBSCAN, KMeans
 
 
 def dbscan_clustering(notes):
-
-    # notes[0]['embedding']
-    dbscan = DBSCAN(eps=3.3, min_samples=1)
+    # used eps=3.3 for NLP Cloud Embeddings
+    # used eps=.6 for OpenAI Embeddings
+    dbscan = DBSCAN(eps=.6, min_samples=1)
     dbscan.fit([note['embedding'] for note in notes])
     labels = dbscan.labels_
 

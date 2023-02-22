@@ -10,7 +10,6 @@ import { EditNoteType, NoteType } from "../../frontend/types";
 export enum CanvasState {
   Editing = 1,
   Waiting = 2,
-  // Reorganizing = 3,
 }
 
 function Notes() {
@@ -81,6 +80,7 @@ function Notes() {
   const [displayState, setDisplayState] = useState<CanvasState>(
     CanvasState.Editing
   );
+  console.log("displayState", displayState);
 
   const prevState = usePrevious(displayState);
 
@@ -142,15 +142,6 @@ function Notes() {
         >
           Re-Organize Your Notes
         </button>
-
-        {/* <button
-          className="reorg_button"
-          onClick={() => {
-            setDisplayState(CanvasState.Editing);
-          }}
-        >
-          Back to Editing
-        </button> */}
       </div>
 
       <div className="base_container">

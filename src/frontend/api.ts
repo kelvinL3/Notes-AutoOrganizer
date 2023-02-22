@@ -1,4 +1,3 @@
-// const backendUrl = "http://localhost:8000";
 import { NoteType } from "./types";
 import { CanvasState } from "../Components/NoteComponents/Notes";
 
@@ -11,16 +10,13 @@ interface sendNotesArgs {
   setDisplayState: (canvasState: CanvasState) => void;
 }
 
-export function requestCookie(setData: SetData) {
-  fetch("/requestCookie")
-    .then((resp) => resp.json())
-    .then((data) => {
-      setData(data);
-    });
-}
-
 export function sendNotes(args: sendNotesArgs) {
   const { notes, sessionId, setNotes, setDisplayState } = args;
+  if (notes.length === 0) {
+    setNotes([]);
+    setDisplayState(CanvasState.Editing);
+    return;
+  }
 
   const requestOptions = {
     method: "POST",
@@ -32,14 +28,33 @@ export function sendNotes(args: sendNotesArgs) {
   };
 
   fetch("/sendNotes", requestOptions)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
     .then((data) => {
-      const clusters: Array<{ id: string; label: number }> = data;
+      // Throwing Error types as void
+      const clusters: Array<{ id: string; label: number }> = data as any;
       notes.forEach((note, index) => {
         const group = clusters[index];
         note["group"] = group["label"]; // we're returning 'label'
       });
       setNotes(notes);
       setDisplayState(CanvasState.Editing);
+    })
+    .catch((error) => {
+      console.log("Error from server, resetting state", error);
+      setDisplayState(CanvasState.Editing);
+    });
+}
+
+// Not implemented
+export function requestCookie(setData: SetData) {
+  fetch("/requestCookie")
+    .then((resp) => resp.json())
+    .then((data) => {
+      setData(data);
     });
 }
