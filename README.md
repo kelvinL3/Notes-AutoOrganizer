@@ -1,5 +1,7 @@
 # Notes Organizer Proof of Concept
 
+https://www.loom.com/share/c44b868b4d554466b98825296a358e30
+
 This app is a basic notes app with a smart organizer feature that allows you to auto group relevant notes together. It works via an embeddings API to compute the vector representation of a note's text in a latent space. Then groups the notes with DBSCAN, a type of clustering algorithm.
 
 # Quickstart
