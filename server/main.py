@@ -5,6 +5,7 @@ from server.embeddings import get_open_ai_embeddings
 from server.embeddings import get_nlp_cloud_embeddings
 from server.clustering import dbscan_clustering
 from server.helpers import freeze
+import pickledb
 
 app = Flask(__name__, static_folder='../build')
 
@@ -30,7 +31,13 @@ def send_data():
     
     return ret
 
-@app.route('')
+
+@app.route('fetchNewNoteClassifiedGroups', methods=['POST'])
+def fetchNewNoteClassifiedGroups():
+    data = json.loads(request.get_data())
+    notes = data['notes']
+
+
 
 
 # Serve React App
