@@ -9,7 +9,7 @@ from server.helpers import freeze
 app = Flask(__name__, static_folder='../build')
 
 
-@app.route('/sendNotes', methods=['POST'])
+@app.route('/fetchNoteGroupsData', methods=['POST'])
 def send_data():
     data = json.loads(request.get_data())
     notes = data['notes']
@@ -29,6 +29,8 @@ def send_data():
     ]
     
     return ret
+
+@app.route('')
 
 
 # Serve React App

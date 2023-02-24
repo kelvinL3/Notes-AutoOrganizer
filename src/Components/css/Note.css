@@ -91,7 +91,7 @@
 }
 
 .group_carousel {
-    color: #ad1349;
+    position: relative; /* For drag and drop highlighting to constrain highlight div size to parent*/
     gap: 15px;
     padding: 5px 5px;
     display: flex;
