@@ -1,27 +1,30 @@
 import { useDrop } from "react-dnd";
 import { ItemTypes, NoteDropItem } from "../../frontend/draggable";
+import { NoteType } from "../../frontend/types";
 
 interface Props {
   groupId: number;
-  moveNote: (id: string, groupId: number) => void;
+  moveNote: (id: string, groupId: number, notes: NoteType[]) => void;
   children: React.ReactNode[];
+  notes: NoteType[];
 }
 
 // Pass through children
 export function Group(props: Props) {
-  const { groupId, children, moveNote } = props;
+  const { groupId, children, moveNote, notes } = props;
 
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: ItemTypes.NOTE,
       drop: (item: NoteDropItem) => {
-        moveNote(item.id, groupId);
+        moveNote(item.id, groupId, notes);
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [groupId]
+    // WARNING, this dependency array doesn't have linting rules to make sure it's accurate.
+    [groupId, notes]
   );
 
   const id = `group__id__${groupId}`;

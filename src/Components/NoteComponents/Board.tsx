@@ -28,10 +28,10 @@ function Board() {
   const [allowUndo, setAllowUndo] = useState<boolean>(false);
 
   const setNotes: React.Dispatch<React.SetStateAction<NoteType[]>> = (
-    notes
+    newNotes
   ) => {
     setAllowUndo(true);
-    setNotesOriginal(notes);
+    setNotesOriginal(newNotes);
   };
   const prevNotes = usePrevious(notes);
   const [inputText, setInputText] = useState("");
@@ -137,13 +137,12 @@ function Board() {
   }, [displayState, notes, prevState]);
 
   /* Dragging and Dropping Notes */
-  const moveNote = (id: string, groupId: number) => {
-    const newNotes: NoteType[] = JSON.parse(JSON.stringify(notes));
+  const moveNote = (id: string, groupId: number, ntemp: NoteType[]) => {
+    const newNotes: NoteType[] = JSON.parse(JSON.stringify(ntemp));
 
     for (const note of newNotes) {
       if (note.id === id) {
         note.group = groupId;
-        console.log(`transferring ${note.group} to ${groupId}`);
         break;
       }
     }
@@ -169,7 +168,8 @@ function Board() {
   for (const key of Object.keys(noteGroups)) {
     const notesInGroup = noteGroups[Number(key)];
     const elements = (
-      <Group groupId={Number(key)} moveNote={moveNote}>
+      <Group groupId={Number(key)} moveNote={moveNote} notes={notes}>
+        {" "}
         {notesInGroup.map((note) => (
           <Note
             key={note.id}
@@ -210,7 +210,7 @@ function Board() {
               setDisplayState(CanvasState.WaitingForClassifyNew);
             }}
           >
-            Classify New Groups
+            Classify New Notes
           </button>
         </div>
 
