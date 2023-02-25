@@ -55,7 +55,7 @@ function Note(props: Props) {
       >
         {text}
       </div>
-      {group}
+      {/* {group} */}
       <div className="note__footer" style={{ justifyContent: "flex-end" }}>
         <DeleteForeverOutlinedIcon
           className="note__delete"
