@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Note from "./Note";
 import "../css/Note.css";
 import CreateNote from "./CreateNote";
@@ -26,7 +26,6 @@ function Board() {
    * Allowing one undo
    */
   const [allowUndo, setAllowUndo] = useState<boolean>(false);
-  // console.log("allowUndo", allowUndo);
 
   const setNotes: React.Dispatch<React.SetStateAction<NoteType[]>> = (
     notes
@@ -36,7 +35,6 @@ function Board() {
   };
   const prevNotes = usePrevious(notes);
   const [inputText, setInputText] = useState("");
-  const [update, setUpdate] = useState(0);
 
   const textHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(e.target.value);
@@ -94,7 +92,7 @@ function Board() {
       return;
     }
     localStorage.setItem("Notes", JSON.stringify(notes));
-  }, [notes, update]);
+  }, [notes]);
 
   // Re-organizing Notes
   const [displayState, setDisplayState] = useState<CanvasState>(
