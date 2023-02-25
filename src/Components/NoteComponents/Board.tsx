@@ -20,7 +20,21 @@ export enum CanvasState {
 }
 
 function Board() {
-  const [notes, setNotes] = useState<NoteType[]>([]);
+  const [notes, setNotesOriginal] = useState<NoteType[]>([]);
+
+  /*
+   * Allowing one undo
+   */
+  const [allowUndo, setAllowUndo] = useState<boolean>(false);
+  // console.log("allowUndo", allowUndo);
+
+  const setNotes: React.Dispatch<React.SetStateAction<NoteType[]>> = (
+    notes
+  ) => {
+    setAllowUndo(true);
+    setNotesOriginal(notes);
+  };
+  const prevNotes = usePrevious(notes);
   const [inputText, setInputText] = useState("");
   const [update, setUpdate] = useState(0);
 
@@ -34,8 +48,8 @@ function Board() {
       {
         id: uuid(),
         text: inputText,
-        // group: -1,
-        group: notes.length,
+        group: -1,
+        // group: notes.length,
       },
     ]);
     //clear the textarea
@@ -48,17 +62,15 @@ function Board() {
   };
 
   const editNote: EditNoteType = (text, id) => {
-    for (const note of notes) {
+    const newNotes: NoteType[] = JSON.parse(JSON.stringify(notes));
+
+    for (const note of newNotes) {
       if (note.id === id) {
         note.text = text;
         break;
       }
     }
-    setNotes(notes);
-    // since notes is still the same object, it
-    // trivially passes the equality check, force update
-    // to trigger save to internalDB
-    setUpdate((u) => u + 1);
+    setNotes(newNotes);
   };
 
   // Saving / Loading
@@ -70,6 +82,8 @@ function Board() {
     if (json) {
       const data = JSON.parse(json);
       setNotes(data);
+      // Disable undo on first load
+      setAllowUndo(false);
     }
   }, []);
 
@@ -102,7 +116,6 @@ function Board() {
       fetchNoteGroupsData({
         notes,
         setNotes: (notes) => {
-          setUpdate((u) => u + 1);
           setNotes(notes);
         },
         setDisplayState,
@@ -117,7 +130,6 @@ function Board() {
       fetchNewNoteClassifiedGroups({
         notes,
         setNotes: (notes) => {
-          setUpdate((u) => u + 1);
           setNotes(notes);
         },
         setDisplayState,
@@ -128,18 +140,17 @@ function Board() {
 
   /* Dragging and Dropping Notes */
   const moveNote = (id: string, groupId: number) => {
-    for (const note of notes) {
+    const newNotes: NoteType[] = JSON.parse(JSON.stringify(notes));
+
+    for (const note of newNotes) {
       if (note.id === id) {
         note.group = groupId;
         console.log(`transferring ${note.group} to ${groupId}`);
         break;
       }
     }
-    setNotes(notes);
-    // since notes is still the same object, it
-    // trivially passes the equality check, force update
-    // to trigger save to internalDB
-    setUpdate((u) => u + 1);
+
+    setNotes(newNotes);
   };
 
   /*
@@ -183,6 +194,7 @@ function Board() {
           <button
             className="reorg_button"
             onClick={() => {
+              setAllowUndo(true);
               setDisplayState(CanvasState.WaitingForCreateGroups);
             }}
           >
@@ -196,10 +208,28 @@ function Board() {
           <button
             className="reorg_button"
             onClick={() => {
+              setAllowUndo(true);
               setDisplayState(CanvasState.WaitingForClassifyNew);
             }}
           >
             Classify New Groups
+          </button>
+        </div>
+
+        <div className="state_change_container">
+          <button
+            style={{
+              opacity: allowUndo ? 1 : 0.5,
+              pointerEvents: allowUndo ? "auto" : "none",
+            }}
+            disabled={!allowUndo}
+            className="reorg_button"
+            onClick={() => {
+              setNotes(prevNotes ? prevNotes : []);
+              setAllowUndo(false);
+            }}
+          >
+            Undo
           </button>
         </div>
 

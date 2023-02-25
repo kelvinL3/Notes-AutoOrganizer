@@ -37,11 +37,12 @@ export function fetchNoteGroupsData(args: SendNotesArgs) {
     .then((data) => {
       // Throwing Error types as void
       const clusters: Array<{ id: string; label: number }> = data as any;
-      notes.forEach((note, index) => {
+      const newNotes: NoteType[] = JSON.parse(JSON.stringify(notes));
+      newNotes.forEach((note, index) => {
         const group = clusters[index];
         note["group"] = group["label"]; // we're returning 'label'
       });
-      setNotes(notes);
+      setNotes(newNotes);
       setDisplayState(CanvasState.Editing);
     })
     .catch((error) => {
@@ -49,7 +50,6 @@ export function fetchNoteGroupsData(args: SendNotesArgs) {
       setDisplayState(CanvasState.Editing);
     });
 }
-
 
 export function fetchNewNoteClassifiedGroups(args: SendNotesArgs) {
   const { notes, sessionId, setNotes, setDisplayState } = args;
@@ -77,12 +77,21 @@ export function fetchNewNoteClassifiedGroups(args: SendNotesArgs) {
     })
     .then((data) => {
       // Throwing Error types as void
-      const clusters: Array<{ id: string; label: number }> = data as any;
-      notes.forEach((note, index) => {
-        const group = clusters[index];
-        note["group"] = group["label"]; // we're returning 'label'
+      const classifications: { [key: string]: number } = data as any; // id to group map
+      console.log("classifications", classifications);
+      const newNotes: NoteType[] = JSON.parse(JSON.stringify(notes));
+      newNotes.forEach((note) => {
+        if (classifications.hasOwnProperty(note.id)) {
+          console.log(
+            "Classifier Transfer from " +
+              note["group"] +
+              " to " +
+              classifications[note.id]
+          );
+          note["group"] = classifications[note.id];
+        }
       });
-      setNotes(notes);
+      setNotes(newNotes);
       setDisplayState(CanvasState.Editing);
     })
     .catch((error) => {

@@ -4,6 +4,7 @@ from typing import List, Dict
 import requests
 from functools import lru_cache
 from server.helpers import unfreeze
+import pickledb
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 NLP_CLOUD_KEY = os.getenv('NLP_CLOUD_KEY')
@@ -14,15 +15,25 @@ NLP_CLOUD_KEY = os.getenv('NLP_CLOUD_KEY')
 def get_open_ai_embeddings(notes: List[Dict[str, str]]):
     notes = unfreeze(notes)
 
-    print("Requesting from OpenAI")
+    print("Fetching Embeddings from OpenAI")
 
+    db = pickledb.load('openai_embeddings_1.db', auto_dump=True, sig=False)
     def get_embedding(text: str):
+        if db.exists(text):
+            print('Using Cached Embedding for text', text)
+            return db.get(text)
+        
+        print('Fetch Embedding Over Network')
         response = openai.Embedding.create(
             input=text,
             model="text-embedding-ada-002"
         )
-
-        return response['data'][0]['embedding']
+        embedding = response['data'][0]['embedding']
+        
+        print('Set Cached Embedding Value')
+        db.set(text, embedding)
+        
+        return embedding
 
     return [{**note, 'embedding': get_embedding(note['text'])} for note in notes]
 

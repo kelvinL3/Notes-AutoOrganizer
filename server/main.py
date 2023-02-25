@@ -1,11 +1,12 @@
 import json
 import os
 from flask import Flask, send_from_directory, request
+from server.classification import knn_classification
 from server.embeddings import get_open_ai_embeddings
 from server.embeddings import get_nlp_cloud_embeddings
 from server.clustering import dbscan_clustering
 from server.helpers import freeze
-import pickledb
+
 
 app = Flask(__name__, static_folder='../build')
 
@@ -32,12 +33,25 @@ def send_data():
     return ret
 
 
-@app.route('fetchNewNoteClassifiedGroups', methods=['POST'])
+@app.route('/fetchNewNoteClassifiedGroups', methods=['POST'])
 def fetchNewNoteClassifiedGroups():
     data = json.loads(request.get_data())
     notes = data['notes']
 
+    embeddings = get_open_ai_embeddings(freeze(notes))
 
+    # Classify All Ungrouped Notes (group=-1)
+    label_updates = knn_classification(embeddings)
+    
+    # label_updates = [
+    #     {
+    #         **data,
+    #         'embedding': 'drop',
+    #         'label': int(data['label'])
+    #     }
+    #     for data in label_updates
+    # ]
+    return label_updates
 
 
 # Serve React App
