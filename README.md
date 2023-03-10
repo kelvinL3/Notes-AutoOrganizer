@@ -6,11 +6,11 @@
 
 Live demo hosted on AWS EC2: http://52.34.250.57/
 
-This app is a basic notes app with a smart organizer feature that allows you to auto group relevant notes together. It works via an embeddings API to compute the vector representation of a note's text in a latent space. Then groups the notes with DBSCAN, a type of clustering algorithm.
+This app is a basic notes app with a smart organizer feature that allows you to auto group relevant notes together. It works via an embeddings API to compute the vector representation of a note's text in a latent space. Then groups the notes with DBSCAN, a type of clustering algorithm. You can click-and-drag to recategorize notes. For future notes, you can use "Classify New Notes" to group new notes into the existing categories. 
 
 # Quickstart
 
-See [instructions](server/README.md)
+See [instructions](server/README.md) for deployment instructions. 
 
 # Architecture
 
@@ -37,6 +37,14 @@ This project uses DBSCAN as the underlying clustering algorithm. I considered us
 As mentioned in the [Embeddings](###Embeddings) section, the latent space of the embedding will influence the tuning of the hyperparameters in the clustering algorithm I choose.
 
 The DBSCAN algorithm takes in a parameter known as `eps`, which serves as the boundary for determining if two points belong to the same cluster. This is based on the distance between the two points, and if the distance is less than or equal to the `eps` value, they are considered part of the same cluster. I tuned this to 3.3.
+
+### Classification
+
+Just using clustering has an issue. Clustering is usually a global process and adding new notes requires reclustering all notes again. This can unexpectedly shuffle previously categorized notes into different categories.
+
+Since users will want to categorize more notes incrementally, I added a classification algorithm, KNN. This allows us to classify new notes to the existing categorized notes. In essence, we fix the currently categorized notes, then for each note we find the currently classified note with the nearest embedding.
+
+Now users can continuously and incrementally add notes.
 
 # Final Thoughts
 
